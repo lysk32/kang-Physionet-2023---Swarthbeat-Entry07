@@ -115,7 +115,10 @@ for k = 1:nsets
     sel_outcomes = outcomes(sel_indx);
     sel_cpcs     = cpcs(sel_indx); 
     fprintf('Training model %d\n',k);
-    model_outcome{k} = TreeBagger(5000,sel_features,sel_outcomes);
+    template = templateTree('MaxNumSplits', 1); 
+    costMatrix = [0 3; 3 0]; 
+    model_outcome{k} = fitcensemble(sel_features,sel_outcomes, 'Method', 'AdaBoostM1', 'Learners', template, 'Cost', costMatrix);
+    
     model_cpc{k}     = TreeBagger(5000,sel_features,sel_cpcs,'method','regression');
 end
 save_model(model_outcome,model_cpc,output_directory);
